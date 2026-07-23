@@ -17,6 +17,11 @@ logger = logging.getLogger(__name__)
 _HW_COLS = "h.pro_id, h.category, h.model, h.brand, h.price_jd, h.price_show, h.price_min, h.tier_score, h.popularity"
 _COMPAT_JOIN = "LEFT JOIN compat c ON h.pro_id = c.pro_id"
 
+# SQL expression: effective price (jd > show > min, skip 0/NULL)
+_EFF_PRICE = "COALESCE(NULLIF(h.price_jd, 0), NULLIF(h.price_show, 0), h.price_min, 0)"
+# SQL expression: has any valid price
+_HAS_PRICE = "(h.price_jd > 0 OR h.price_show > 0 OR h.price_min > 0)"
+
 
 def _effective_price(row: dict) -> int | None:
     for k in ("price_jd", "price_show", "price_min"):
@@ -41,9 +46,9 @@ def _pick_cheapest(
     order_by: str = "price_jd ASC",
 ) -> dict | None:
     """在预算内选最便宜的件。"""
-    clauses = [f"h.category='{category}'", "h.active=1", "h.price_jd>0"]
+    clauses = [f"h.category='{category}'", "h.active=1", _HAS_PRICE]
     clauses.extend(where_clauses)
-    clauses.append(f"h.price_jd <= {max_price}")
+    clauses.append(f"{_EFF_PRICE} <= {max_price}")
     where = " AND ".join(clauses)
     sql = f"SELECT {_HW_COLS}, c.* FROM hardware h {_COMPAT_JOIN} WHERE {where} ORDER BY {order_by} LIMIT 1"
     rows = _db_rows(db_path, sql, tuple(where_params))
@@ -58,10 +63,10 @@ def _pick_best(
     limit: int = 1,
 ) -> list[dict]:
     """在预算内选最符合条件的件（可多件）。"""
-    clauses = [f"h.category='{category}'", "h.active=1", "h.price_jd>0"]
+    clauses = [f"h.category='{category}'", "h.active=1", _HAS_PRICE]
     clauses.extend(where_clauses)
     # 允许略超预算（CANDIDATE_PRICE_SLACK）
-    clauses.append(f"h.price_jd <= {int(max_price * CANDIDATE_PRICE_SLACK)}")
+    clauses.append(f"{_EFF_PRICE} <= {int(max_price * CANDIDATE_PRICE_SLACK)}")
     where = " AND ".join(clauses)
     sql = f"SELECT {_HW_COLS}, c.* FROM hardware h {_COMPAT_JOIN} WHERE {where} ORDER BY {order_by} LIMIT {limit}"
     return _db_rows(db_path, sql, tuple(where_params))

@@ -162,9 +162,11 @@ def _backfill_tier_scores(
     category: str,
     tiers: list[dict],
 ) -> None:
-    """将天梯 score 回填到 hardware.tier_score。
+    """将天梯 score 回填到 hardware.tier_score，并归一化到 0-300 尺度。
 
     CPU 取 game 维度，GPU 取 default 维度。
+    ZOL 原始分 GPU ~1000-18000 / CPU ~35-1000，尺度不同，
+    归一化使 demand_map 中的阈值可跨品类比较。
     """
     kind = "cpu" if category == "cpu" else "gpu"
     preferred_dim = "game" if kind == "cpu" else "default"
@@ -177,14 +179,32 @@ def _backfill_tier_scores(
         pid = t.get("pro_id", "")
         dim = t.get("dimension", "")
         score = t.get("score", 0)
+        if score <= 0:
+            continue
         if pid not in score_map or dim == preferred_dim:
             score_map[pid] = score
 
     if not score_map:
         return
 
-    # 批量更新
-    rows = [(score, pid) for pid, score in score_map.items()]
+    # 归一化到 0-300（基于当前爬取批次内的 min/max）
+    scores = list(score_map.values())
+    score_min = min(scores)
+    score_max = max(scores)
+    score_range = score_max - score_min
+    if score_range <= 0:
+        score_range = 1
+
+    def _norm(s: float) -> float:
+        return round((s - score_min) / score_range * 300.0, 1)
+
+    logger.info(
+        "%s tier normalize: raw [%.0f, %.0f] → 0-300",
+        category, score_min, score_max,
+    )
+
+    # 批量更新 hardware
+    rows = [(_norm(score), pid) for pid, score in score_map.items()]
     conn.executemany(
         "UPDATE hardware SET tier_score = ? WHERE pro_id = ? AND category = ?",
         [(s, pid, category) for s, pid in rows],
