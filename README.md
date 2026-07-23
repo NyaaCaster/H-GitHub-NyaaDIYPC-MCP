@@ -51,24 +51,27 @@ macmini (U-MacMini-1, 192.168.31.141, Ubuntu x86_64)
     {
       "label": "推荐",
       "items": [
-        {"category": "cpu",   "model": "Intel i5-14600KF", "price": 1499},
-        {"category": "gpu",   "model": "RTX 4070 SUPER 12GB", "price": 4599},
-        {"category": "mainboard", "model": "TUF B760M-PLUS", "price": 749},
-        {"category": "memory",    "model": "FURY Beast 32GB DDR5", "price": 799}
+        {"category": "cpu",       "model": "…", "price": 1499},
+        {"category": "gpu",       "model": "…", "price": 4599},
+        {"category": "mainboard", "model": "…", "price": 749},
+        {"category": "memory",    "model": "…", "price": 799},
+        {"category": "ssd",       "model": "…", "price": 549},
+        {"category": "psu",       "model": "…", "price": 499},
+        {"category": "cooler",    "model": "…", "price": 159},
+        {"category": "case",      "model": "…", "price": 399}
       ],
-      "total": 7646,
+      "total": 7971,
       "in_budget": true,
       "compat_ok": true,
-      "est_power": 420.5,
       "perf_note": "生化危机9 2k high (推荐)"
     }
   ],
   "demand_hit": {"source": "map", "game": "生化危机9", "resolution": "2k", "quality": "high"},
-  "priced_at": "2026-07-23T20:00:00+00:00"
+  "priced_at": "2026-07-23T…"
 }
 ```
 
-> ⚠️ 当前不支持 4K 原生渲染游戏配置——请求 4K 时自动回绝，引导用户改为 2K 分辨率。
+> ⚠️ 4K 原生渲染游戏配置会自动回绝（引导 2K）。实测 9 品类 25,380 件 ZOL 真机数据，8 件套方案兼容全过。
 
 ## 项目结构
 
@@ -121,8 +124,10 @@ SQLite，表结构见 `.docs/design/02-数据模型详细设计.md`。
 
 - **硬件列表 + 规格**：ZOL 产品库，`GetGoods` API 列表页 + 深层 param 页
 - **价格**：ZOL 京东价（主）+ best-price 淘宝价（次）
-- **天梯分**：ZOL CPU/GPU 天梯图页面解析
+- **天梯分**：ZOL CPU/GPU 天梯图页面解析，动态归一化到 0-300
 - **需求映射**：手工维护 `demand_map`（内置 6 款游戏 + 4 条通用回退档位）
+
+当前库存：**9 品类 25,380 件**（cpu:220 / gpu:2,557 / mainboard:2,311 / memory:4,050 / hdd:675 / ssd:4,995 / psu:2,876 / cooler:4,995 / case:2,701），每日 06:00 cron 全量刷新。
 
 ## 搭配算法流程
 
@@ -223,7 +228,7 @@ docker exec nyaadiypc-mcp python -m app.crawler.run --category cpu
 | `MCP_API_KEY` | Bearer 鉴权 token（不设为空则无鉴权） | — |
 | `DIYPC_DB_PATH` | SQLite 路径 | `/app/data/diypc.db` |
 | `PRIVATE_DOCKER_REGISTRY_HOST` | 私有仓库地址（禁硬编码） | — |
-| `CRAWL_CRON` | 定时爬虫周期 | `0 4 * * *` |
+| `CRAWL_CRON` | 定时爬虫周期 | `0 6 * * *` |
 | `DEEP_TOP_N` | 深参页抓取上限 | `300` |
 | `PLAN_COUNT` | build_pc 方案数 | `3` |
 | `REPAIR_MAX_ITER` | 兼容修复最大轮次 | `5` |
