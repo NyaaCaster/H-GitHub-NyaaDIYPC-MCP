@@ -1,3 +1,5 @@
 mcp>=1.12
 uvicorn>=0.30
 starlette>=0.38
+httpx>=0.28
+beautifulsoup4>=4.12

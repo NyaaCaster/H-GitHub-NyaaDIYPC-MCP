@@ -13,12 +13,21 @@ Starlette app 默认以 /mcp 为端点，无需外层 Mount。顶层 ASGI wrappe
 import os
 import json
 
+from app.db.schema import init_db
 from app.mcp.server import create_mcp_server
 from app.mcp.auth import BearerAuthWrapper
 
 
 def build_app():
     """组装 ASGI app：MCP streamable HTTP + Bearer 鉴权 + /health。"""
+
+    # 启动时自动初始化数据库（解决 P1 遗留项）
+    db_path = os.getenv("DIYPC_DB_PATH", "/app/data/diypc.db")
+    db_parent = os.path.dirname(db_path)
+    if db_parent and not os.path.exists(db_parent):
+        os.makedirs(db_parent, exist_ok=True)
+    init_db(db_path)
+
     mcp = create_mcp_server()
 
     # MCP SDK 产出 Starlette ASGI app，内部已挂载 /mcp 路径处理
