@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    image: nyaadiypc-mcp:latest
+    container_name: nyaadiypc-mcp
+    environment:
+      - TZ=Asia/Shanghai
+      - MCP_PORT=5115
+      - MCP_HOST=0.0.0.0
+    env_file:
+      - .env
+    ports:
+      - "5115:5115"
+    # SQLite 数据库绑定挂载 — 落地为真实文件，删卷不丢 rebuild 不丢
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

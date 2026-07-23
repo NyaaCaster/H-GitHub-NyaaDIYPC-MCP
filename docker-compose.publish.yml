@@ -1,0 +1,16 @@
+services:
+  app:
+    image: ${PRIVATE_DOCKER_REGISTRY_HOST:?err}/nyaadiypc-mcp:latest
+    container_name: nyaadiypc-mcp
+    pull_policy: always
+    environment:
+      - TZ=Asia/Shanghai
+      - MCP_PORT=5115
+      - MCP_HOST=0.0.0.0
+    env_file:
+      - .env
+    ports:
+      - "5115:5115"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

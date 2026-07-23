@@ -1,0 +1,33 @@
+# 参考资料目录（探索期抓包/样例/上游文档，不纳入版本跟踪）
+.ref/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# 环境与私密
+.env
+.env.linux
+*.local
+
+# 数据库与爬取产物（大文件 / 运行时生成）
+*.db
+*.db-wal
+*.db-shm
+data/
+*.dump
+
+# 日志与临时
+*.log
+tmp/
+temp/
+
+# Claude Code 本地设置（不入仓库）
+.claude/settings.local.json
+
+# 内部文档（非公开）
+.doc/
