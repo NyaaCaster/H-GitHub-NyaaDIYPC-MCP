@@ -119,11 +119,41 @@ def build_pc(
     resolution = goal.get("resolution", "1080p")
     quality = goal.get("quality", "medium")
 
+    # 4K 游戏回绝：当前没有显卡能原生 4K 中高画质流畅运行
+    usage = goal.get("usage", "gaming")
+    if resolution == "4k" and usage not in ("office", "productivity"):
+        return {
+            "plans": [],
+            "demand_hit": {
+                "source": "4k_refused",
+                "game": game or "",
+                "resolution": resolution,
+                "quality": quality,
+                "min_gpu_tier": None,
+                "rec_gpu_tier": None,
+                "min_cpu_tier": None,
+                "rec_cpu_tier": None,
+                "min_vram_gb": None,
+                "min_ram_gb": None,
+                "note": "4K 原生渲染目前不可行",
+            },
+            "priced_at": datetime.now(timezone.utc).isoformat(),
+            "4k_refused": True,
+            "refusal_message": (
+                "亲，目前市面上的显卡还无法在原生4K分辨率下以中高画质流畅运行大型3A游戏。\n\n"
+                "建议您以原生2K分辨率配置电脑，这是当前硬件条件下的甜点分辨率，"
+                "可以在高画质下享受流畅的游戏体验。\n\n"
+                "不过，如果您确实需要4K输出，这套2K配置也可以通过 DLSS/FSR 插帧技术"
+                "和分辨率缩放来满足4K显示器的游戏运行需求——"
+                "虽然不是原生4K渲染，但实际观感已经非常接近了。\n\n"
+                "请告诉我您在2K分辨率下的预算和游戏需求，我来为您配置一套最适合的电脑吧！"
+            ),
+        }
+
     # 需求映射
     demand = lookup_demand(db_path, game, resolution, quality)
 
-    # 确定 budget profile
-    usage = goal.get("usage", "gaming")
+    # 确定 budget profile（usage 已在 4K 检测前提取）
     profile = "balanced" if usage in ("office", "productivity", "balanced") else "gaming"
 
     # 预算跨度

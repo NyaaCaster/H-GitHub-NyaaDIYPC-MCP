@@ -307,9 +307,34 @@ class TestBuildPC:
 
     def test_build_pc_returns_demand_hit(self, db_path):
         result = build_pc(db_path, 8000, 10000,
-                         {"game": "赛博朋克2077", "resolution": "4k", "quality": "high"})
+                         {"game": "赛博朋克2077", "resolution": "2k", "quality": "high"})
         assert result["demand_hit"]["source"] == "map"
         assert "priced_at" in result
+
+    def test_build_pc_4k_refused(self, db_path):
+        """4K 游戏配置请求应返回回绝。"""
+        result = build_pc(db_path, 15000, 20000,
+                         {"game": "黑神话悟空", "resolution": "4k", "quality": "high"})
+        assert result.get("4k_refused") is True
+        assert len(result["plans"]) == 0
+        assert result["demand_hit"]["source"] == "4k_refused"
+        assert "原生4K" in result.get("refusal_message", "")
+        assert "2K" in result.get("refusal_message", "")
+        assert "DLSS" in result.get("refusal_message", "")
+
+    def test_build_pc_4k_office_not_refused(self, db_path):
+        """4K 办公需求不触发回绝。"""
+        result = build_pc(db_path, 5000, 8000,
+                         {"resolution": "4k", "quality": "medium", "usage": "office"})
+        assert not result.get("4k_refused")
+        assert len(result["plans"]) >= 1
+
+    def test_build_pc_2k_not_refused(self, db_path):
+        """2K 分辨率的游戏需求不触发回绝。"""
+        result = build_pc(db_path, 8000, 10000,
+                         {"game": "生化危机9", "resolution": "2k", "quality": "high"})
+        assert not result.get("4k_refused")
+        assert len(result["plans"]) >= 1
 
 
 # ============================================================

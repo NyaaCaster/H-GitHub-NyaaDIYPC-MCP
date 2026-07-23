@@ -286,7 +286,7 @@ validate_build(items[]) -> {compat_ok, issues[], total, in_budget?}
 | P3 | 价格模块：ZOL 京东价为主 + best-price 补淘宝价 + 过滤层（串货/整机剔除）（详见 [03](design/03-价格与对齐详细设计.md)） | 抽样件价格准确、来源标注正确 | ✅ |
 | P4 | 兼容规则引擎 + `validate_build` 工具（详见 [04](design/04-兼容引擎与D3计算详细设计.md)） | 已知兼容/不兼容组合校验正确 | ✅ |
 | P5 | 需求映射表 + `build_pc` 搭配算法（硬编基线）（详见 [05](design/05-需求映射与D6搭配算法详细设计.md)） | 示例需求出 1~3 套方案、总价算准、落预算区间 | ✅ |
-| P6 | MCP 工具封装 + NyaaCLI `.claude/mcp.json` 接入 + 端到端联调（详见 [06](design/06-MCP工具契约与接入详细设计.md)） | 容器内 claude 能调通三工具、模拟 QQ 需求走通全链路 | ⬜ |
+| P6 | MCP 工具封装 + NyaaCLI `.claude/mcp.json` 接入 + 端到端联调（详见 [06](design/06-MCP工具契约与接入详细设计.md)） | 容器内 claude 能调通三工具、模拟 QQ 需求走通全链路 | ✅ |
 | P7 | macmini 部署收尾（迁移规范）+ 定时爬虫任务 + 文档交接（详见 [07](design/07-部署与环境详细设计.md)） | 真机 E2E、定时刷新生效 | ⬜ |
 
 状态符号：⬜ 未开始 ｜ 🟡 进行中 ｜ ✅ 已完成

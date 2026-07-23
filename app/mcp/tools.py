@@ -105,6 +105,9 @@ def register_all_placeholder_tools(mcp):
         服务端流程：需求映射 → 预算分配 → 逐类选件 → 兼容修复 → 预算收敛 → 多方案输出。
         所有数值（总价/功耗/预算判定）由服务端计算，claude/LLM 禁止自行求和或改数字。
 
+        注意：当前不支持 4K 分辨率原生渲染游戏配置——若 goal 中 resolution 为 "4k"，
+        且非办公/生产力用途，将返回回绝提示并建议用户改为 2K 分辨率。
+
         Args:
             budget_min: 预算下限（元）
             budget_max: 预算上限（元）
@@ -117,7 +120,9 @@ def register_all_placeholder_tools(mcp):
             {
               "plans": [{label, items[], total, in_budget, compat_ok, est_power, perf_note}],
               "demand_hit": {source, game, resolution, quality, ...},
-              "priced_at": "ISO8601"
+              "priced_at": "ISO8601",
+              "4k_refused": bool|null,   # 4K 游戏请求会被回绝
+              "refusal_message": str|null # 回绝时附说明
             }
         """
         # 解析 goal
