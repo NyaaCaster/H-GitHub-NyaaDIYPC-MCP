@@ -127,4 +127,12 @@ def init_db(db_path: str) -> sqlite3.Connection:
         "INSERT OR IGNORE INTO meta(key, value) VALUES('schema_version', '1')"
     )
     conn.commit()
+
+    # 自动播种需求映射表（幂等）
+    try:
+        from app.build.demand import seed_demand_map
+        seed_demand_map(db_path)
+    except Exception:
+        pass  # 播种失败不阻断服务启动
+
     return conn
