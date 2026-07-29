@@ -66,8 +66,15 @@ EOF
 ### 4. 推送（仅在用户要求时或 P 阶段收尾时）
 
 - 默认目标：`origin master`。
-- 若 `git push` 报 DPAPI/Session 0 错误，用 `windows-user-session-runner` skill 执行。
+- 标准命令：`git -c http.extraHeader="Authorization: Bearer $GITHUB_PAT" push origin master`（首次推送可加 `-u` 设置上游）。
 - 推送后 `git status` 验证。
+
+## GitHub 鉴权（MUST）
+
+所有 `git push` / `gh` 操作必须通过 `$GITHUB_PAT` 鉴权。
+`$GITHUB_PAT` 由 `H:\GitHub\.claude\settings.json` 的 `env` 段注入，无需手动设置。
+
+禁止裸 `git push`（会走 DPAPI/Credential Manager → Session 0 报错）。
 
 ## 绝不提交
 
