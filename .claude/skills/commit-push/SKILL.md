@@ -66,7 +66,7 @@ EOF
 ### 4. 推送（仅在用户要求时或 P 阶段收尾时）
 
 - 默认目标：`origin master`。
-- 标准命令：`git -c http.extraHeader="Authorization: Bearer $GITHUB_PAT" push origin master`（首次推送可加 `-u` 设置上游）。
+- 标准命令：`git -c credential.helper= -c "url.https://x-access-token:$GITHUB_PAT@github.com/.insteadOf=https://github.com/" push origin master`（首次推送可加 `-u` 设置上游）。
 - 推送后 `git status` 验证。
 
 ## GitHub 鉴权（MUST）
