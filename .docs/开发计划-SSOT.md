@@ -62,7 +62,7 @@ QQ 用户 →「为我配置一台能在 2K 分辨率下尽量流畅玩生化危
 ### 1.1 部署拓扑（macmini 生产环境）
 
 ```
-macmini (U-MacMini-1, 192.168.31.141, Ubuntu x86_64, Docker via Snap)
+macmini (macmini, 192.168.31.141, Ubuntu x86_64, Docker via Snap)
 ├── astrbot            :6185(WebUI) / :6199(internal)
 │    └── 猫猫智能框架插件 → nyaa_think llm_tool
 ├── nyaacli            :5113   容器内独立 claude code (Bash全开 + MCP + WebFetch)

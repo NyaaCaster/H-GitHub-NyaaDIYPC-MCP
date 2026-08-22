@@ -192,7 +192,7 @@ def local_cleanup(host: str, sha: str, secrets: list[str]):
 # env push (optional convenience)
 # ---------------------------------------------------------------------------
 
-MACMINI_HOST = "U-MacMini-1"
+MACMINI_HOST = "macmini"
 MACMINI_PORT = "22141"
 MACMINI_PROJECT_DIR = "/root/DockerContainer/NyaaDIYPC-MCP"
 

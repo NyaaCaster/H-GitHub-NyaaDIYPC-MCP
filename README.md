@@ -22,7 +22,7 @@ QQ 用户自然语言
 ## 部署拓扑
 
 ```
-macmini (U-MacMini-1, 192.168.31.141, Ubuntu x86_64)
+macmini (macmini, 192.168.31.141, Ubuntu x86_64)
 ├── nyaadiypc-mcp    :5115   ← 本项目
 │   ├── Python 3.12 + FastMCP (Streamable HTTP)
 │   ├── SQLite: 9 品类 ZOL 硬件库 + 需求映射表
@@ -200,11 +200,11 @@ python rebuild.py --skip-push
 
 ```bash
 # 传输文件
-scp -P 22141 docker-compose.publish.yml U-MacMini-1:/root/DockerContainer/NyaaDIYPC-MCP/docker-compose.yml
-scp -P 22141 restart.py .env U-MacMini-1:/root/DockerContainer/NyaaDIYPC-MCP/
+scp -P 22141 docker-compose.publish.yml macmini:/root/DockerContainer/NyaaDIYPC-MCP/docker-compose.yml
+scp -P 22141 restart.py .env macmini:/root/DockerContainer/NyaaDIYPC-MCP/
 
 # 部署
-ssh -p 22141 U-MacMini-1
+ssh -p 22141 macmini
 cd /root/DockerContainer/NyaaDIYPC-MCP
 python3 restart.py
 ```
